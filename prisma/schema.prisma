@@ -2,52 +2,42 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
+  provider        = "prisma-client-js"
+  output          = "../node_modules/.prisma/client"
+  previewFeatures = ["extendedWhereUnique"]
 }
-
-// datasource db {
-//   provider = "mysql"
-//   url      = env("DATABASE_URL")
-// }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "mongodb"
+  url      = env("MONGO_DATABASE_URL")
 }
-
-// datasource db {
-//   provider = "mongodb"
-//   url      = env("DATABASE_URL")
-// }
 
 model Asset {
   id           String        @id @map("_id")
   symbol       String
   price        Float
+  WalletAssets WalletAsset[]
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
-  WalletAssets WalletAsset[]
   Orders       Order[]
 }
 
 model Wallet {
   id           String        @id @map("_id")
+  WalletAssets WalletAsset[]
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
-  WalletAssets WalletAsset[]
   Orders       Order[]
 }
 
 model WalletAsset {
-  id         Int      @id @default(autoincrement()) @map("_id")
-  // id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   Wallet     Wallet   @relation(fields: [wallet_id], references: [id])
   wallet_id  String
   Asset      Asset    @relation(fields: [asset_id], references: [id])
   asset_id   String
-  shares     Int
-  // shares     Int      @db.Int
+  shares     Int      @db.Int
+  version    Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -55,49 +45,42 @@ model WalletAsset {
 }
 
 model Order {
-  id           Int           @id @default(autoincrement()) @map("_id")
-  // id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
   Wallet       Wallet        @relation(fields: [wallet_id], references: [id])
   wallet_id    String
   Asset        Asset         @relation(fields: [asset_id], references: [id])
   asset_id     String
-  shares       Int
-  // shares       Int           @db.Int
+  shares       Int           @db.Int
   price        Float
-  // type         OrderType
-  // status       OrderStatus
-  partial      Int
-  // partial      Int           @db.Int
+  type         OrderType
+  status       OrderStatus
+  partial      Int           @db.Int
+  version      Int
+  Transactions Transaction[]
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
-  Transactions Transaction[]
 }
 
-// enum OrderType {
-//   BUY
-//   SELL
-// }
+enum OrderType {
+  BUY
+  SELL
+}
 
-// enum OrderStatus {
-//   PENDING
-//   OPENED
-//   CLOSED
-//   FAILED
-// }
+enum OrderStatus {
+  PENDING
+  OPEN
+  CLOSED
+  FAILED
+}
 
 model Transaction {
-  id                    Int      @id @default(autoincrement()) @map("_id")
-  // id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
   Order                 Order    @relation(fields: [order_id], references: [id])
-  order_id              Int
-  // order_id              String   @db.ObjectId
+  order_id              String   @db.ObjectId
   related_investor_id   String
   broker_transaction_id String
-  shares                Int
-  // shares                Int      @db.Int
+  shares                Int      @db.Int
   price                 Float
   created_at            DateTime @default(now())
   updated_at            DateTime @updatedAt
 }
-
-// npx prisma migrate dev --name "Created WalletAsset table"

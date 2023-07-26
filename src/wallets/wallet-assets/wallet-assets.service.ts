@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class WalletAssetsService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   all(filter: { wallet_id: string }) {
     return this.prismaService.walletAsset.findMany({
@@ -28,6 +28,7 @@ export class WalletAssetsService {
         wallet_id: input.wallet_id,
         asset_id: input.asset_id,
         shares: input.shares,
+        version: 1,
       },
     });
   }

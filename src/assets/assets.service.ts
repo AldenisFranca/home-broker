@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AssetsService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-  async all() {
-    return await this.prismaService.asset.findMany();
+  all() {
+    return this.prismaService.asset.findMany();
   }
 
-  async create(data: Prisma.AssetCreateInput) {
-    return await this.prismaService.asset.create({ data });
+  create(data: { id: string; symbol: string; price: number }) {
+    return this.prismaService.asset.create({ data });
   }
 }

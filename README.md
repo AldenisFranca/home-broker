@@ -45,6 +45,15 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Docker
+```bash
+# run app
+$ docker-compose up -d
+
+# run services
+$ docker-compose -f docker-compose.kafka.yml up -d
+```
+
 ## Test
 
 ```bash
