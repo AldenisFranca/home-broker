@@ -3,7 +3,7 @@ import { WalletAssetsService } from './wallet-assets.service';
 
 @Controller('wallets/:wallet_id/assets')
 export class WalletAssetsController {
-  constructor(private walletAssetsService: WalletAssetsService) {}
+  constructor(private readonly walletAssetsService: WalletAssetsService) {}
 
   @Get()
   all(@Param('wallet_id') wallet_id: string) {
@@ -15,9 +15,6 @@ export class WalletAssetsController {
     @Param('wallet_id') wallet_id: string,
     @Body() body: { asset_id: string; shares: number },
   ) {
-    return this.walletAssetsService.create({
-      wallet_id,
-      ...body,
-    });
+    return this.walletAssetsService.create({ wallet_id, ...body });
   }
 }
